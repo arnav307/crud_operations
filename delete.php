@@ -3,12 +3,17 @@ require 'db.php';
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['delete_student'])) {
     try {
         $id = $_POST['id'];
-       
-        $sql = "DELETE FROM students
-        WHERE $id=?";
+
+        $sql = "DELETE FROM students WHERE $id=? LIMIT 1";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$id]);
+
+        if ($stmt->rowCount() > 0) {
+            echo "Student deleted successfully";
+        } else {
+            echo " No student found with this ID";
+        }
 
         } catch (PDOException $e) {
         $error = "Unable to delete the row: " . $e->getMessage();
@@ -55,5 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['delete_student'])) {
 
 	<button type="submit" name="delete_student">Delete</button>
 </form>
+<a href="read_student.php">back to read</a>
 </body>
 </html>
